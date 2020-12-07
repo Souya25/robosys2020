@@ -1,7 +1,7 @@
 # robosys2020
 ロボットシステム学の課題用に作成
 ## 概要
-デバイスドライバを作成し、7セグメントLEDを光らせで1~6の数字を表示させるプログラム.
+デバイスドライバを作成し、7セグメントLEDを光らせて1~6の数字を表示させるプログラム.
 
 ## 動作環境/使用したもの
 - Raspberry Pi Raspberry Pi 3 Model B+
@@ -21,21 +21,31 @@ LEDをRaspberry PiのGPIO｛16, 17, 18, 19, 20, 23, 27}に接続
 
 ## 実行手順
 まずこのリポジトリをクローンしてくる
+
 `git clone https://github.com/Souya25/robosys2020.git`
 
 ディレクトリを移動
+
 `cd robosys2020`
+
 以下を実行
+
 `make`
+
 `sudo insmod myled.ko`
+
 `sudo chmod 666 /dev/myled0`
+
 `echo $((RANDOM%6+1)) > /dev/myled0`
 
 LEDを消灯させるとき
+
 `echo - > /dev/myled0`
 
 後処理をする
+
 `sudo rmmod myled`
+
 `make clean`
 
 ## 実際の映像
