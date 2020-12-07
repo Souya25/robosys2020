@@ -28,7 +28,7 @@ LEDをRaspberry PiのGPIO｛16, 17, 18, 19, 20, 23, 27}に接続
 
 ディレクトリを移動
 
-`cd robosys2020`
+`cd robosys2020/seven_segment`
 
 
 makeするコマンド
