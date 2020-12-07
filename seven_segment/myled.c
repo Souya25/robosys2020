@@ -16,6 +16,15 @@ static struct cdev cdv;
 static struct class *cls = NULL; 
 static volatile u32 *gpio_base = NULL;
 
+static int seg_gpio[7] = {16, 20, 19, 27, 17, 23, 18};
+static int seg_1[7]= {0, 1, 1, 0, 0, 0, 0};
+static int seg_2[7]= {1, 1, 0, 1, 1, 0, 1};
+static int seg_3[7]= {1, 1, 1, 1, 0, 0, 1};
+static int seg_4[7]= {0, 1, 1, 0, 0, 1, 1};
+static int seg_5[7]= {1, 0, 1, 1, 0, 1, 1};
+static int seg_6[7]= {1, 0, 1, 1, 1, 1, 1};
+
+
 static ssize_t sushi_read(struct file* filp, char* buf, size_t count, loff_t* pos)
 {
     int size = 0;
@@ -29,17 +38,87 @@ static ssize_t sushi_read(struct file* filp, char* buf, size_t count, loff_t* po
 }
 
 static ssize_t led_write(struct file* filp, const char* buf, size_t count, loff_t* pos)
-{
+{    
+     int n;
      char c;   //読み込んだ字を入れる変数
      if(copy_from_user(&c,buf,sizeof(char)))
         return -EFAULT;
 
      //printk(KERN_INFO "receive %c\n",c);
-     if(c == '0')
-         gpio_base[10] = 1 << 21;
+     if(c == '-')
+     {
+         for( n = 0; n < 7; n++)
+               gpio_base[7] = 1 << seg_gpio[n];
+     }
      else if(c == '1')
-         gpio_base[7] = 1 << 21;
+     {
+         for( n = 0; n < 7; n++ )
+         {
+             if( seg_1[n] == 0)
+             {
+                 gpio_base[7] = 1 << seg_gpio[n];
+             }else
+             {
+                 gpio_base[10] = 1 << seg_gpio[n];
+             }
+         }
+     }
+     else if(c == '2')
+     {
+         for( n = 0; n < 7; n++ )
+         {
+             if( seg_2[n] == 0)
+             {
+                 gpio_base[7] = 1 << seg_gpio[n];
+             }else
+                 gpio_base[10] = 1 << seg_gpio[n];
+         }
+     }
+     else if(c == '3')
+     {
+         for( n = 0; n < 7; n++ )
+         {
+             if( seg_3[n] == 0)
+             {
+                 gpio_base[7] = 1 << seg_gpio[n];
+             }else
+                 gpio_base[10] = 1 << seg_gpio[n];
+         }
+     }
+     else if(c == '4')
+     {
+         for( n = 0; n < 7; n++ )
+         {
+             if( seg_4[n] == 0)
+             {
+                 gpio_base[7] = 1 << seg_gpio[n];
+             }else
+                 gpio_base[10] = 1 << seg_gpio[n];
+         }
+     }
 
+     else if(c == '5')
+     {
+         for( n = 0; n < 7; n++ )
+         {
+             if( seg_5[n] == 0)
+             {
+                 gpio_base[7] = 1 << seg_gpio[n];
+             }else
+                 gpio_base[10] = 1 << seg_gpio[n];
+         }
+     }
+     else if(c == '6')
+     {
+         for( n = 0; n < 7; n++ )
+         {
+             if( seg_6[n] == 0)
+             {
+                 gpio_base[7] = 1 << seg_gpio[n];
+             }else
+                 gpio_base[10] = 1 << seg_gpio[n];
+         }
+     }
      return 1;
 }
 
@@ -52,7 +131,7 @@ static struct file_operations led_fops = {
 static int __init init_mod(void)
 {
     int retval;
-    
+    int i;
 
     retval =  alloc_chrdev_region(&dev, 0, 1, "myled");
     if(retval < 0){
@@ -76,12 +155,14 @@ static int __init init_mod(void)
 
     gpio_base = ioremap_nocache(0x3f200000, 0xA0);
     
-    const u32 led = 21;
-    const u32 index = led/10;//GPFSEL2
-    const u32 shift = (led%10)*3;//15bit
-    const u32 mask = ~(0x7 << shift);//11111111111111000111111111111111
-    gpio_base[index] = (gpio_base[index] & mask) | (0x1 << shift);//001: output flag
-
+    for( i = 0 ; i < 7 ; i++)
+    { 
+        const u32 led = seg_gpio[i];
+        const u32 index = led/10;//GPFSEL2
+        const u32 shift = (led%10)*3;//15bit
+        const u32 mask = ~(0x7 << shift);//11111111111111000111111111111111
+        gpio_base[index] = (gpio_base[index] & mask) | (0x1 << shift);//001: output flag
+    }
     
 
     return 0;
