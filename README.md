@@ -20,6 +20,8 @@ LEDをRaspberry PiのGPIO｛16, 17, 18, 19, 20, 23, 27}に接続
 ![led](https://user-images.githubusercontent.com/55970079/101341014-d21fa700-38c3-11eb-91e5-9836f4f9fdfb.png)
 
 ## 実行手順
+以下のコマンドを順番に行う
+
 まずこのリポジトリをクローンしてくる
 
 `git clone https://github.com/Souya25/robosys2020.git`
@@ -28,13 +30,20 @@ LEDをRaspberry PiのGPIO｛16, 17, 18, 19, 20, 23, 27}に接続
 
 `cd robosys2020`
 
-以下を実行
+
+makeするコマンド
 
 `make`
 
+カーネルモジュールのロード
+
 `sudo insmod myled.ko`
 
+読みとりと書き込みの権限を付与
+
 `sudo chmod 666 /dev/myled0`
+
+下のコマンドで、1~6の数字からランダムに選ばれLEDが光る
 
 `echo $((RANDOM%6+1)) > /dev/myled0`
 
